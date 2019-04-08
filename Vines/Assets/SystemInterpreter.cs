@@ -5,10 +5,14 @@ using UnityEngine;
 public class SystemInterpreter : MonoBehaviour {
 
     public GameObject vinePiece;
+    public GameObject redPoint;
+
+
     public Lsystem lSystem;
 
     Vector3 genPoint = new Vector3();
-    Vector3 direction = Vector3.up;
+    Vector3 direction = Vector3.up
+        ;
 
 
     Vector3 savedGenPoint = new Vector3();
@@ -16,10 +20,64 @@ public class SystemInterpreter : MonoBehaviour {
 
     List<GameObject> components = new List<GameObject>();
 
-	void Start () {
-        GenerateSystem();
 
-	}
+
+    
+    void Start () {
+
+
+        Debug.Log("GOOSE");
+        for (int rep = 0; rep < 20; rep++)
+        {
+            Collider[] colliders = Physics.OverlapSphere(genPoint, 1);
+
+            genPoint = colliders[0].ClosestPoint(genPoint); ;
+
+            Instantiate(redPoint, genPoint, Quaternion.identity);
+
+            genPoint += direction;
+            
+
+        }
+        
+
+
+
+    }
+    Vector3 anchorPoint;
+    
+    
+
+
+
+
+    Vector3 getClosestAnchorPoint(Vector3 pointToLookFrom)
+    {
+        Collider[] colliders = Physics.OverlapSphere(pointToLookFrom, 1);
+
+        float mindist = float.MaxValue;
+        Vector3 postionToAnchorTo = new Vector3(10, 10, 10);
+        foreach (Collider collider in colliders)
+        {
+
+
+            float dist = Vector3.Magnitude((pointToLookFrom) - collider.ClosestPoint(pointToLookFrom));
+
+            
+            if (dist < mindist)
+            {
+                mindist = dist;
+                postionToAnchorTo = collider.ClosestPoint(pointToLookFrom);
+
+                Debug.Log(mindist + " " + collider.name);
+            }
+        }
+
+        
+        return postionToAnchorTo;
+    }
+    
+
 
     public void GenerateSystem()
     {
